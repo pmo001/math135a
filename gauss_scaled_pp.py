@@ -83,6 +83,7 @@ def det_scales(A):
         s[i] = max(np.absolute(A[i]))
     return s
 
+#FIXME don't seem to need this def
 def row_wo_key(mtx, dict1, key):
 #dict1[key]: returns idx that corresponds with key
 #                         1: keeps all cols 
@@ -90,12 +91,24 @@ def row_wo_key(mtx, dict1, key):
     return mtx[dict1[key], 1:]
     #1st arg:      ^{refers to row with this idx} like mtx[1][1:]
 
+#concats array A with array b
+def aug_mtx(A, b):
+    aug_mtx = np.hstack((A,b))
+    print(aug_mtx)
+    return aug_mtx
+
+#arg: must take in augmented mtx
+def forward_elim(aug_mtx):
+    return
+
 #args: A = mtx (square)
 #       b = col mtx
 #       n = # of cols := len(A) or len(b)
 def guass_scaled_partial_pivot(A, b):
     n = len(A) #nxn square mtx
 
+    #will insert b's values ordered by scales in here
+    b_ordered = np.zeros((n,1))
     #determines the scales(1xn array)
     s = det_scales(A)
     s_col_vect = np.zeros((n,1))
@@ -109,6 +122,8 @@ def guass_scaled_partial_pivot(A, b):
     vals = np.zeros((n,1))
     for i in range(n):
         vals[i] = i
+
+    
 
     #{'first': array([0.]), 'second': array([1.]), 'third': array([2.])}
     dict1 = dict(zip(keys, vals))
@@ -167,14 +182,21 @@ def guass_scaled_partial_pivot(A, b):
             #3rd arg: axis=1 == col
         A = np.delete(A, 0, axis=1)
 
+        b_ordered[j] = b[pivot_idx]
+
+    
+#    print("      >>>>>>last row idx should be 1: >>", list_row_indices[0])
+#    print("mtx that is mising the last row:", ordered_by_scale_mtx)
     #append last row
     #only one num left in list_row_indices
-    print("      >>>>>>last row idx should be 1: >>", list_row_indices[0])
-    print("mtx that is mising the last row:", ordered_by_scale_mtx)
     ordered_by_scale_mtx[n-1] = mtx_w_key[list_row_indices[0], 1:]
-#todo: return a float with 4 sig figs(project brief)
+    b_ordered[n-1] = b[list_row_indices[0]]
+
+#TODO: return a float with 4 sig figs(project brief)
     print("          >>>>>>>>>>>>> final ordered mtx: ", ordered_by_scale_mtx)
-    return ordered_by_scale_mtx
+    print("         ____________ordered::scaled augmented mtx: ")
+    aug_mtx = np.hstack((ordered_by_scale_mtx, b_ordered))
+    return aug_mtx
 
 def print_mtx_array(mtx):
     for i in range(len(mtx)):
@@ -185,13 +207,30 @@ def main():
     C = np.array([[2,3,0],[-1,2,-1],[3,0,2]]) #1st pivot row: 2=row3
     #s = 4,5,7; .75,.85 => 1st pivot row = 2=row3
     D = [[3,4,3],[1,5,-1],[6,3,7]]
-    b = [1,2,3]
-    
-    print("orig mtx: ", C)
-    mtx = guass_scaled_partial_pivot(C, b)
+    b = [8,0,9]
 
- ###   print(get_pivot_row_idx())
-    #print_mtx_array(mtx)
+    #ref: lecture 6 and 7 slides
+    lec6 = np.array([[2, 10000], 
+                    [1,1]])
+    lec6_b = [[10000], 
+            [2]]
+    
+#####    print("orig mtx: ", C)
+#####    mtx = guass_scaled_partial_pivot(C, b)
+
+    #this produces the correct order of the rows as shown in lec6n7 slides
+    #returns an augmented mtx of correctly ordered rows
+    mtx = guass_scaled_partial_pivot(lec6, lec6_b)
+
+    print("lec6's augmented matrix: ", mtx)
+
+
+    #*one line code for finding solution*:
+    #print(np.linalg.solve(C,b))
+    print("exact sol = [[1],[1]]\n numpy sol: ", np.linalg.solve(lec6, lec6_b))
+
+
+
 
     return
 
