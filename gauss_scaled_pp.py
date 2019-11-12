@@ -223,24 +223,34 @@ def main():
     lec6_b = [[10000], 
             [2]]
     
-#####    mtx = guass_scaled_partial_pivot(C, b)
+    project2_A = np.array([[.2246, .3872, .4015, .1129],
+                [.3645, .1920, .3781, .0643],
+                [.4096, .1234, .3678, .2943],
+                [.1784, .4002, .2786, .3927]])
+    project2_b = np.array([[.4043],
+                [.1550],
+                [.4240],
+                [.2557]])
 
     #this produces the correct order of the rows as shown in lec6n7 slides
     #returns an augmented mtx of correctly ordered rows
-    mtx = guass_scaled_partial_pivot(lec6, lec6_b)
-    print("lec6's augmented matrix: ", mtx)
+###    mtx = guass_scaled_partial_pivot(lec6, lec6_b)
+###    print("lec6's augmented matrix: ", mtx)
 
 
     #*one line code for finding solution*:
     #print(np.linalg.solve(C,b))
-    print("exact sol = [[1],[1]]\n numpy sol: ", np.linalg.solve(lec6, lec6_b))
+##    print("exact sol = [[1],[1]]\n numpy sol: ", np.linalg.solve(lec6, lec6_b))
+    
 
-    #convert numpy to a native python type using .item()
+##    print("numpy linalg solution:\n", np.linalg.solve(project2_A, project2_b))
+
+    project2_1_sol = np.linalg.solve(project2_A, project2_b)
+    
     sol_w_4_sig_figs = []
-    #FIXME change      v 1
-    for i in range(len(lec6_b)):
-        #FIXME change             v 2   v 3end
-        tmp_val = np.linalg.solve(lec6, lec6_b)[i].item()
+    for i in range(len(project2_1_sol)):
+        #convert numpy to a native python type using .item()
+        tmp_val = project2_1_sol[i].item()
         #rounding a val w/ 4 sig figs 
         sol_w_4_sig_figs.append(round_w_sig(tmp_val, 4))
     print(sol_w_4_sig_figs)
