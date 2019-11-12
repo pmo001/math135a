@@ -1,4 +1,5 @@
 import numpy as np
+from math import log10, floor #used for rounding w.r.t sig figs
 
 #2nd arg: the scales
 #returns a numpy array of positions of pivot rows
@@ -202,7 +203,14 @@ def print_mtx_array(mtx):
     for i in range(len(mtx)):
         print(mtx[i])
 
+
+#rounds a val w.r.t sig figs
+def round_w_sig(x, sig):
+    #                             vv takes care of negative nums
+    return round(x, (sig) - int(floor(log10(abs(x))))-1)
+
 def main():
+    #examples:
     B = [[1,2,3],[5,6,7],[8,9,10]] #1st pivot row: 2=row3
     C = np.array([[2,3,0],[-1,2,-1],[3,0,2]]) #1st pivot row: 2=row3
     #s = 4,5,7; .75,.85 => 1st pivot row = 2=row3
@@ -215,13 +223,11 @@ def main():
     lec6_b = [[10000], 
             [2]]
     
-#####    print("orig mtx: ", C)
 #####    mtx = guass_scaled_partial_pivot(C, b)
 
     #this produces the correct order of the rows as shown in lec6n7 slides
     #returns an augmented mtx of correctly ordered rows
     mtx = guass_scaled_partial_pivot(lec6, lec6_b)
-
     print("lec6's augmented matrix: ", mtx)
 
 
@@ -229,7 +235,15 @@ def main():
     #print(np.linalg.solve(C,b))
     print("exact sol = [[1],[1]]\n numpy sol: ", np.linalg.solve(lec6, lec6_b))
 
-
+    #convert numpy to a native python type using .item()
+    sol_w_4_sig_figs = []
+    #FIXME change      v 1
+    for i in range(len(lec6_b)):
+        #FIXME change             v 2   v 3end
+        tmp_val = np.linalg.solve(lec6, lec6_b)[i].item()
+        #rounding a val w/ 4 sig figs 
+        sol_w_4_sig_figs.append(round_w_sig(tmp_val, 4))
+    print(sol_w_4_sig_figs)
 
 
     return
